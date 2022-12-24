@@ -1,8 +1,11 @@
 ## TODO
 - [ ] Remove unused OAuth scopes
 - [ ] Use prettier spinners and prompts
-- [ ] Add paging for AddTrackToPlaylist (handles edge case where 100+ tracks have been liked from the same album)
-- [ ] Add alternative names for playlists without emojis for Windows
+- [ ] Show color info for each track during processing/adding
 - [ ] Finetune colour matching
-- [ ] Error handling can be better
 - [ ] Write a proper README
+
+## Maybe
+- [ ] Add alternative names for playlists without emojis for Windows
+- [ ] Error handling can be better
+- [ ] Add paging for AddTrackToPlaylist (handles edge case where 100+ tracks have been liked from the same album)
