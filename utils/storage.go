@@ -15,7 +15,6 @@ type Secrets struct {
 }
 
 // Recursively generate config dir in $HOME/.config/gamut
-// and the current directory
 func createConfigDir() (cfgDirPath string, err error) {
 	homedir, err := os.UserHomeDir()
 	if err != nil {

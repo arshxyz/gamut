@@ -34,7 +34,7 @@ type RefreshError struct {
 	ErrorDescription string `json:"error_description"`
 }
 
-var allscopes = []string{auth.ScopeUserReadCurrentlyPlaying, auth.ScopeUserReadPlaybackState, auth.ScopeUserModifyPlaybackState, auth.ScopeUserReadRecentlyPlayed, auth.ScopeStreaming, auth.ScopeUserLibraryRead, auth.ScopeUserLibraryModify, auth.ScopePlaylistModifyPrivate}
+var allscopes = []string{auth.ScopeUserLibraryRead, auth.ScopePlaylistModifyPrivate}
 
 var (
 	SpotifyAuth = func(clid, cls string) *auth.Authenticator {
@@ -105,11 +105,6 @@ func Authenticate() (client *spotify.Client, err error) {
 	}
 	// Start a client
 	client = spotify.New(SpotifyAuth(clid, cls).Client(context.Background(), tok), spotify.WithRetry(true))
-	user, err := client.CurrentUser(context.Background())
-	if err != nil {
-		log.Fatalln(err)
-	}
-	fmt.Println("Logged in as", user.DisplayName)
 	return client, nil
 }
 
