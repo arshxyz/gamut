@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"image/color"
 	"log"
+	"time"
 
 	"github.com/arshxyz/gamut/authenticate"
 	"github.com/arshxyz/gamut/colorestimation"
 	"github.com/arshxyz/gamut/utils"
+	termcol "github.com/fatih/color"
 	"github.com/zmb3/spotify/v2"
 )
 
@@ -36,6 +38,9 @@ var ColouredPlaylists = map[string]string{
 	"bw":          "🤍🖤 Liked 🤍🖤",
 	"orange":      "🧡🧡 Liked 🧡🧡",
 }
+var (
+	cyan = termcol.New(termcol.FgCyan, termcol.Bold).SprintFunc()
+)
 
 // Finds promiment colour for all albums of liked songs
 // and adds all liked songs in their corresponding playlists
@@ -50,6 +55,9 @@ func classify(client *spotify.Client, playlistID PlaylistIDMap) {
 	albumColor := make(map[spotify.ID]coloredAlbum)
 	// Maps Album ID to liked tracks in the Album
 	albumSongs := make(map[spotify.ID][]songInfo)
+	procStr := ""
+	procChan := make(chan bool)
+	go utils.Spin(&procStr, "✅ Processed tracks!", procChan)
 
 	for page := 0; ; page++ {
 		if len(tracks.Tracks) == 0 {
@@ -75,19 +83,25 @@ func classify(client *spotify.Client, playlistID PlaylistIDMap) {
 			}
 			// Add song to Album ID
 			albumSongs[album.ID] = append(albumSongs[album.ID], songInfo{Name: v.Name, ID: v.ID})
-			fmt.Printf("\033[2K\r%s", fmt.Sprint("Processing track: ", count, " of ", total))
+			procStr = fmt.Sprintf("Processing track %d of %d", count, total)
 			count++
 		}
 
 	}
+	procChan <- true
 	// Start count again for adding tracks to albums after processing
+	// fmt.Print("\n")
+	addStr := ""
+	addStatus := make(chan bool)
+	doneStr := fmt.Sprintf("✅ Split %d liked tracks into playlists by colour!", total)
+	go utils.Spin(&addStr, doneStr, addStatus)
 	count = 1
 	for albumID, songs := range albumSongs {
 		closest := colorestimation.FindClosest(albumColor[albumID].colorVal)
 		songIDs := make([]spotify.ID, 0, len(songs))
 		for _, song := range songs {
 			songIDs = append(songIDs, song.ID)
-			fmt.Printf("\033[2K%s\r", fmt.Sprint("Adding track: ", count, " of ", total))
+			addStr = fmt.Sprintf("Adding track %d of %d", count, total)
 			count++
 		}
 
@@ -96,13 +110,13 @@ func classify(client *spotify.Client, playlistID PlaylistIDMap) {
 			log.Fatalln(err)
 		}
 	}
-	fmt.Println("Split", total, "liked tracks into Playlists by colour!")
+	addStatus <- true
 }
 
 // Create playlists for all colours
 func createPlaylists(client *spotify.Client, playlistID PlaylistIDMap) {
 	user, _ := client.CurrentUser(context.Background())
-	fmt.Println("Logged in as", user.DisplayName)
+	fmt.Println("Logged in as", cyan(user.DisplayName))
 	userID := user.ID
 	count := 1
 	for pcolor, pname := range ColouredPlaylists {
@@ -114,7 +128,7 @@ func createPlaylists(client *spotify.Client, playlistID PlaylistIDMap) {
 		playlistID[pcolor] = playlist.ID
 		count++
 	}
-	fmt.Println("\033[2KCreated Playlists!\r")
+	fmt.Println("\033[2K✅ Created Playlists!\r")
 }
 
 func main() {
@@ -122,5 +136,6 @@ func main() {
 	playlistID := make(PlaylistIDMap)
 	createPlaylists(client, playlistID)
 	classify(client, playlistID)
+	time.Sleep(time.Second)
 
 }

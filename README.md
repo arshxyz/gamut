@@ -1,6 +1,6 @@
 ## TODO
-- [ ] Remove unused OAuth scopes
-- [ ] Use prettier spinners and prompts
+- [x] Remove unused OAuth scopes
+- [x] Use prettier spinners and prompts
 - [ ] Show color info for each track during processing/adding
 - [ ] Finetune colour matching
 - [ ] Write a proper README
