@@ -96,6 +96,7 @@ func classify(client *spotify.Client, playlistID PlaylistIDMap) {
 			log.Fatalln(err)
 		}
 	}
+	fmt.Println("Split", total, "liked tracks into Playlists by colour!")
 }
 
 // Create playlists for all colours
@@ -121,4 +122,5 @@ func main() {
 	playlistID := make(PlaylistIDMap)
 	createPlaylists(client, playlistID)
 	classify(client, playlistID)
+
 }
