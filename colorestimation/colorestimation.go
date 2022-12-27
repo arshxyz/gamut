@@ -20,11 +20,18 @@ type cs struct {
 // Playing with the colours in each colour set
 // until satisfactory results are obtained
 var (
+	// red     = []color.RGBA{{255, 0, 0, 255}}
+	// green   = []color.RGBA{{0, 255, 0, 255}, {34, 139, 34, 255}, {72, 160, 84, 255}}
+	// blue    = []color.RGBA{{0, 0, 205, 255}, {135, 206, 250, 255}}
+	// yellow  = []color.RGBA{{255, 255, 0, 25}}
+	// pink    = []color.RGBA{{255, 0, 255, 25}, {230, 170, 190, 255}}
+	// bw      = []color.RGBA{{255, 255, 255, 255}, {0, 0, 0, 255}}
+	// orange  = []color.RGBA{{255, 69, 0, 255}}
 	red     = []color.RGBA{{255, 0, 0, 255}}
-	green   = []color.RGBA{{0, 255, 0, 255}, {34, 139, 34, 255}}
-	blue    = []color.RGBA{{0, 0, 205, 255}, {135, 206, 250, 255}}
-	yellow  = []color.RGBA{{255, 255, 0, 25}}
-	pink    = []color.RGBA{{255, 0, 255, 25}}
+	green   = []color.RGBA{{0, 255, 0, 255}, {0, 150, 0, 255}}
+	blue    = []color.RGBA{{0, 0, 255, 255}, {0, 255, 255, 255}}
+	yellow  = []color.RGBA{{255, 255, 0, 255}}
+	pink    = []color.RGBA{{255, 0, 255, 255}, {230, 170, 190, 255}}
 	bw      = []color.RGBA{{255, 255, 255, 255}, {0, 0, 0, 255}}
 	orange  = []color.RGBA{{255, 69, 0, 255}}
 	colours = []cs{

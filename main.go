@@ -10,7 +10,7 @@ import (
 	"github.com/arshxyz/gamut/authenticate"
 	"github.com/arshxyz/gamut/colorestimation"
 	"github.com/arshxyz/gamut/utils"
-	termcol "github.com/fatih/color"
+	termcol "github.com/gookit/color"
 	"github.com/zmb3/spotify/v2"
 )
 
@@ -39,7 +39,7 @@ var ColouredPlaylists = map[string]string{
 	"orange":      "🧡🧡 Liked 🧡🧡",
 }
 var (
-	cyan = termcol.New(termcol.FgCyan, termcol.Bold).SprintFunc()
+	cyan = termcol.New(termcol.FgCyan, termcol.Bold)
 )
 
 // Finds promiment colour for all albums of liked songs
@@ -101,7 +101,8 @@ func classify(client *spotify.Client, playlistID PlaylistIDMap) {
 		songIDs := make([]spotify.ID, 0, len(songs))
 		for _, song := range songs {
 			songIDs = append(songIDs, song.ID)
-			addStr = fmt.Sprintf("Adding track %d of %d", count, total)
+			songColorString := termcol.HEX(albumColor[albumID].ColorString, true)
+			addStr = fmt.Sprintf("Adding track %d of %d: %s", count, total, songColorString.Sprintf(song.Name))
 			count++
 		}
 
@@ -116,7 +117,7 @@ func classify(client *spotify.Client, playlistID PlaylistIDMap) {
 // Create playlists for all colours
 func createPlaylists(client *spotify.Client, playlistID PlaylistIDMap) {
 	user, _ := client.CurrentUser(context.Background())
-	fmt.Println("Logged in as", cyan(user.DisplayName))
+	fmt.Println("Logged in as", cyan.Render(user.DisplayName))
 	userID := user.ID
 	count := 1
 	for pcolor, pname := range ColouredPlaylists {
