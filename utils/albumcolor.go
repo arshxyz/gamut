@@ -18,27 +18,32 @@ func GetAlbumColour(album spotify.SimpleAlbum) (colorstring string, colorVal col
 	defer os.Remove(c.Name())
 	// Images is an array of 3 images of different
 	// sizes - from 300x300 to 64x64.
-	album.Images[0].Download(c)
-	t, err := loadImage(c.Name())
-	if err != nil {
-		log.Fatalln(err)
-	}
-	// Perform Kmeans without cropping to find promiment colour
-	cols, err := prominentcolor.KmeansWithArgs(prominentcolor.ArgumentNoCropping, t)
-	if err != nil {
-		// Donda moment.
-		// A fully black picture has no non-alpha pixels and returns an error
+	if len(album.Images)>0 {
+		album.Images[0].Download(c)
+		t, err := loadImage(c.Name())
+		if err != nil {
+			log.Fatalln(err)
+		}
+		// Perform Kmeans without cropping to find promiment colour
+		cols, err := prominentcolor.KmeansWithArgs(prominentcolor.ArgumentNoCropping, t)
+		if err != nil {
+			// Donda moment.
+			// A fully black picture has no non-alpha pixels and returns an error
+			colorstring = "#000000"
+			colorVal = color.RGBA{0, 0, 0, 255}
+		} else {
+			domcolour := cols[0]
+			colorstring = "#" + domcolour.AsString()
+			colorVal = color.RGBA{
+				uint8(domcolour.Color.R),
+				uint8(domcolour.Color.G),
+				uint8(domcolour.Color.B),
+				255,
+			}
+		}
+	} else {
 		colorstring = "#000000"
 		colorVal = color.RGBA{0, 0, 0, 255}
-	} else {
-		domcolour := cols[0]
-		colorstring = "#" + domcolour.AsString()
-		colorVal = color.RGBA{
-			uint8(domcolour.Color.R),
-			uint8(domcolour.Color.G),
-			uint8(domcolour.Color.B),
-			255,
-		}
 	}
 	return colorstring, colorVal
 }
